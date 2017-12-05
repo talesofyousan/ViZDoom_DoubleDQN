@@ -13,6 +13,7 @@ import replay_memory
 import network_double
 import agent_dqn
 import math
+from helper import make_gif
 
 # Q-learning settings
 learning_rate = 0.0025
@@ -60,6 +61,29 @@ def exploration_rate(epoch):
     else:
         return end_eps
 
+def save_gif(game, agent, id):
+    print("Saving gif file")
+
+    images = []
+    for step in range(testepisodes_per_epoch):
+
+        game.new_episode()
+        while not game.is_episode_finished():
+            buff = game.get_state().screen_buffer
+            best_action_index = agent.get_best_action(buff)
+
+            images.append(buff)
+
+            game.make_action(actions[best_action_index])
+
+            for _ in range(frame_repeat):
+                game.advance_action()
+
+        print("total:", game.get_total_reward())
+
+    make_gif(np.array(images),"./gifs/test%04d.gif"%(id),duration=len(images)*0.1,true_image=True,salience=False)
+
+
 if __name__=="__main__":
     game = initialize_vizdoom(config_file_path)
 
@@ -92,6 +116,15 @@ if __name__=="__main__":
 
         game.new_episode()
 
+        if epoch == 0:
+            save_gif(game,agent,epoch)
+        elif epoch == 5:
+            save_gif(game,agent,epoch)
+        elif epoch == 9:
+            save_gif(game,agent,epoch)
+        else:
+            pass
+
         for step in tqdm(range(steps_per_epoch)):
             if game.is_player_dead():
                 game.respawn_player()
@@ -108,10 +141,6 @@ if __name__=="__main__":
                 game.new_episode()
                 train_episodes_finished += 1
 
-        #network.save_model(ckpt_path+"model.ckpt",epoch)
-        frag_count = game.get_game_variable(GameVariable.FRAGCOUNT)
-        death_count = game.get_game_variable(GameVariable.DEATHCOUNT)
-
         print("%d training episodes played." % train_episodes_finished)
 
         print("FRAG: %d, DEATH: %d" % (frag_count, death_count))
@@ -123,6 +152,7 @@ if __name__=="__main__":
         print("Total Results: mean %.1f(plusminus)%.1f," %(total_train_scores.mean(), train_scores.std()), \
                   "min: %.1f," % total_train_scores.min(), "max: %.1f," % total_train_scores.max())
 
+"""
     print("Test Phase")
 
     game.close()
@@ -144,5 +174,5 @@ if __name__=="__main__":
                 game.advance_action()
 
         print("total:", game.get_total_reward())
-
+"""
     game.close()

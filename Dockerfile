@@ -75,6 +75,6 @@ COPY replay_memory.py .
 COPY network_double.py .
 COPY agent_dqn.py .
 COPY train_test.py .
-
+RUN mkdir gifs
 
 CMD /bin/bash
