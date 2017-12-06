@@ -13,17 +13,17 @@ import replay_memory
 import network_double
 import agent_dqn
 import math
-from helper import make_gif
+from helper import make_gif, set_imageio
 
 # Q-learning settings
 learning_rate = 0.0025
 discount_factor= 0.99
 resolution = (30, 45, 1)
-n_epoch = 5
-steps_per_epoch = 2000
+n_epoch = 10
+steps_per_epoch = 1000
 testepisodes_per_epoch = 5
 config_file_path = "./config/simpler_basic.cfg"
-ckpt_path = "./model/"
+model_path = "./model/"
 freq_copy = 30
 frame_repeat = 12
 capacity = 10**4
@@ -114,16 +114,16 @@ if __name__=="__main__":
         train_scores = []
         total_train_scores = []
 
-        game.new_episode()
-
         if epoch == 0:
-            save_gif(game,agent,epoch)
+            agent.save_model(model_path+"%04d"%(epoch)+".ckpt")
         elif epoch == 5:
-            save_gif(game,agent,epoch)
+            agent.save_model(model_path+"%04d"%(epoch)+".ckpt")
         elif epoch == 9:
-            save_gif(game,agent,epoch)
+            agent.save_model(model_path+"%04d"%(epoch)+".ckpt")
         else:
             pass
+
+        game.new_episode()
 
         for step in tqdm(range(steps_per_epoch)):
             if game.is_player_dead():
@@ -143,8 +143,6 @@ if __name__=="__main__":
 
         print("%d training episodes played." % train_episodes_finished)
 
-        print("FRAG: %d, DEATH: %d" % (frag_count, death_count))
-
         train_scores = np.array(train_scores)
         total_train_scores = np.array(total_train_scores)
         print("Results: mean: %.1f(+-)%.1f," % (train_scores.mean(), train_scores.std()), \
@@ -152,6 +150,7 @@ if __name__=="__main__":
         print("Total Results: mean %.1f(plusminus)%.1f," %(total_train_scores.mean(), train_scores.std()), \
                   "min: %.1f," % total_train_scores.min(), "max: %.1f," % total_train_scores.max())
 
+    game.close
 """
     print("Test Phase")
 
@@ -175,4 +174,3 @@ if __name__=="__main__":
 
         print("total:", game.get_total_reward())
 """
-    game.close()

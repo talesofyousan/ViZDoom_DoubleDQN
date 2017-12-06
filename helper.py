@@ -64,11 +64,15 @@ def saveToCenter(i,rList,jList,bufferArray,summaryLength,h_size,sess,mainQN,time
         a, v = sess.run([mainQN.Advantage,mainQN.Value],\
             feed_dict={mainQN.scalarInput:np.vstack(bufferArray[:,0])/255.0,mainQN.trainLength:len(bufferArray),mainQN.state_in:state_train,mainQN.batch_size:1})
         wr.writerows(zip(bufferArray[:,1],bufferArray[:,2],a[:,0],a[:,1],a[:,2],a[:,3],v[:,0]))
+
+def set_imageio():
+    import imageio
+    imageio.plugins.ffmpeg.download()
     
 #This code allows gifs to be saved of the training episode for use in the Control Center.
 def make_gif(images, fname, duration=2, true_image=False,salience=False,salIMGS=None):
-  import imageio
-  imageio.plugins.ffmpeg.download()
+  #import imageio
+  #imageio.plugins.ffmpeg.download()
   import moviepy.editor as mpy
   
   def make_frame(t):

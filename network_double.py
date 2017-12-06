@@ -137,7 +137,7 @@ class network_simple(object):
     def write(self, s1):
         self.writer.add_summary(self.session.run(self.merged,feed_dict={self.s1_:s1}))
 
-    def save_model(self, model_path,id):
+    def save_model(self, model_path):
         self.saver.save(self.session, model_path)
 
     def restore_model(self,model_path):

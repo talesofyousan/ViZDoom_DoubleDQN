@@ -62,3 +62,9 @@ class agent_dqn(object):
     def get_best_action(self, img):
         state = self.preprocess(img)
         return self.q_network.get_best_action(state)
+
+    def restore_model(self, model_path):
+        self.q_network.restore_model(model_path)
+
+    def save_model(self, model_path):
+        self.q_network.save_model(model_path)
