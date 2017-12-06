@@ -14,7 +14,6 @@ import replay_memory
 import network_double
 import agent_dqn
 import math
-from helper import make_gif, set_imageio
 
 # Q-learning settings
 learning_rate = 0.0025

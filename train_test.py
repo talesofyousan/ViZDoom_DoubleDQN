@@ -13,7 +13,6 @@ import replay_memory
 import network_double
 import agent_dqn
 import math
-from helper import make_gif, set_imageio
 
 # Q-learning settings
 learning_rate = 0.0025
@@ -60,28 +59,6 @@ def exploration_rate(epoch):
                        (eps_decay_epochs - const_eps_epochs) * (start_eps - end_eps)
     else:
         return end_eps
-
-def save_gif(game, agent, id):
-    print("Saving gif file")
-
-    images = []
-    for step in range(testepisodes_per_epoch):
-
-        game.new_episode()
-        while not game.is_episode_finished():
-            buff = game.get_state().screen_buffer
-            best_action_index = agent.get_best_action(buff)
-
-            images.append(buff)
-
-            game.make_action(actions[best_action_index])
-
-            for _ in range(frame_repeat):
-                game.advance_action()
-
-        print("total:", game.get_total_reward())
-
-    make_gif(np.array(images),"./gifs/test%04d.gif"%(id),duration=len(images)*0.1,true_image=True,salience=False)
 
 
 if __name__=="__main__":
@@ -150,27 +127,4 @@ if __name__=="__main__":
         print("Total Results: mean %.1f(plusminus)%.1f," %(total_train_scores.mean(), train_scores.std()), \
                   "min: %.1f," % total_train_scores.min(), "max: %.1f," % total_train_scores.max())
 
-    game.close
-"""
-    print("Test Phase")
-
     game.close()
-    game.set_window_visible(True)
-    game.set_mode(Mode.ASYNC_PLAYER)
-    game.init()
-
-    test_scores=[]
-    for step in range(testepisodes_per_epoch):
-
-        game.new_episode()
-        while not game.is_episode_finished():
-            best_action_index = agent.get_best_action(game.get_state().screen_buffer)
-
-            game.make_action(actions[best_action_index])
-            sleep(sleep_time)
-
-            for _ in range(frame_repeat):
-                game.advance_action()
-
-        print("total:", game.get_total_reward())
-"""

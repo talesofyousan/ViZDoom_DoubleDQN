@@ -18,4 +18,4 @@ if [ -e temp ]; then
   rm temp -rf
 fi
 
-${DOCKER_CMD} run -ti --net=host --privileged -e DISPLAY=${DISPLAY} --name ${DIRECTORY} ${DIRECTORY}
+${DOCKER_CMD} run -ti --net=host --privileged -e DISPLAY=${DISPLAY} --rm --name ${DIRECTORY} ${DIRECTORY}

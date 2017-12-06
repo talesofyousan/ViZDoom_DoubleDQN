@@ -70,7 +70,6 @@ USER ${USER_NAME}
 WORKDIR ${HOME_DIR}
 
 RUN mkdir config
-RUN mkdir gifs
 RUN mkdir model
 COPY model ./model
 COPY config ./config
@@ -78,7 +77,6 @@ COPY replay_memory.py .
 COPY network_double.py .
 COPY agent_dqn.py .
 COPY train_test.py .
-COPY helper.py .
 COPY demo.py .
 
 CMD python3 train_test.py; python3 demo.py ./model/0009.ckpt
