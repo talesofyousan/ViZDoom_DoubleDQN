@@ -81,4 +81,4 @@ COPY train_test.py .
 COPY helper.py .
 COPY demo.py .
 
-CMD /bin/bash
+CMD python3 train_test.py; python3 demo.py ./model/0009.ckpt

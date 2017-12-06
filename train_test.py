@@ -19,8 +19,8 @@ from helper import make_gif, set_imageio
 learning_rate = 0.0025
 discount_factor= 0.99
 resolution = (30, 45, 1)
-n_epoch = 10
-steps_per_epoch = 1000
+n_epoch = 2
+steps_per_epoch = 100
 testepisodes_per_epoch = 5
 config_file_path = "./config/simpler_basic.cfg"
 model_path = "./model/"
