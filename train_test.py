@@ -20,7 +20,7 @@ discount_factor= 0.99
 resolution = (30, 45, 1)
 n_epoch = 2
 steps_per_epoch = 100
-testepisodes_per_epoch = 5
+n_test_episodes = 100
 config_file_path = "./config/simpler_basic.cfg"
 model_path = "./model/"
 freq_copy = 30
@@ -126,5 +126,24 @@ if __name__=="__main__":
                   "min: %.1f," % train_scores.min(), "max: %.1f," % train_scores.max())
         print("Total Results: mean %.1f(plusminus)%.1f," %(total_train_scores.mean(), train_scores.std()), \
                   "min: %.1f," % total_train_scores.min(), "max: %.1f," % total_train_scores.max())
+
+    print("Test phase")
+    test_scores = []
+    for step in tqdm(range(n_test_episodes)):
+
+        game.new_episode()
+        while not game.is_episode_finished():
+            best_action_index = agent.get_best_action(game.get_state().screen_buffer)
+
+            game.make_action(actions[best_action_index], frame_repeat)
+
+        r = game.get_total_reward()
+        test_scores.append(r)
+
+    test_scores = np.array(test_scores)
+    print("%d episodes are tested" %(test_scores.size))
+    print(test_scores)
+    print("Results: mean: %.1f(+-)%.1f," % (test_scores.mean(), test_scores.std()), \
+                  "min: %.1f," % test_scores.min(), "max: %.1f," % test_scores.max())
 
     game.close()

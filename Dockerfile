@@ -79,4 +79,5 @@ COPY agent_dqn.py .
 COPY train_test.py .
 COPY demo.py .
 
-CMD python3 train_test.py; python3 demo.py ./model/0009.ckpt
+#CMD python3 train_test.py; python3 demo.py ./model/0009.ckpt
+CMD /bin/bash
