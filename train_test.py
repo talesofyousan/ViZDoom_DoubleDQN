@@ -18,11 +18,11 @@ import math
 learning_rate = 0.0025
 discount_factor= 0.99
 resolution = (30, 45, 1)
-n_epoch = 5
-steps_per_epoch = 2000
-testepisodes_per_epoch = 5
+n_epoch = 2
+steps_per_epoch = 100
+n_test_episodes = 100
 config_file_path = "./config/simpler_basic.cfg"
-ckpt_path = "./model/"
+model_path = "./model/"
 freq_copy = 30
 frame_repeat = 12
 capacity = 10**4
@@ -60,6 +60,7 @@ def exploration_rate(epoch):
     else:
         return end_eps
 
+
 if __name__=="__main__":
     game = initialize_vizdoom(config_file_path)
 
@@ -90,6 +91,15 @@ if __name__=="__main__":
         train_scores = []
         total_train_scores = []
 
+        if epoch == 0:
+            agent.save_model(model_path+"%04d"%(epoch)+".ckpt")
+        elif epoch == 5:
+            agent.save_model(model_path+"%04d"%(epoch)+".ckpt")
+        elif epoch == 9:
+            agent.save_model(model_path+"%04d"%(epoch)+".ckpt")
+        else:
+            pass
+
         game.new_episode()
 
         for step in tqdm(range(steps_per_epoch)):
@@ -108,13 +118,7 @@ if __name__=="__main__":
                 game.new_episode()
                 train_episodes_finished += 1
 
-        #network.save_model(ckpt_path+"model.ckpt",epoch)
-        frag_count = game.get_game_variable(GameVariable.FRAGCOUNT)
-        death_count = game.get_game_variable(GameVariable.DEATHCOUNT)
-
         print("%d training episodes played." % train_episodes_finished)
-
-        print("FRAG: %d, DEATH: %d" % (frag_count, death_count))
 
         train_scores = np.array(train_scores)
         total_train_scores = np.array(total_train_scores)
@@ -123,26 +127,23 @@ if __name__=="__main__":
         print("Total Results: mean %.1f(plusminus)%.1f," %(total_train_scores.mean(), train_scores.std()), \
                   "min: %.1f," % total_train_scores.min(), "max: %.1f," % total_train_scores.max())
 
-    print("Test Phase")
-
-    game.close()
-    game.set_window_visible(True)
-    game.set_mode(Mode.ASYNC_PLAYER)
-    game.init()
-
-    test_scores=[]
-    for step in range(testepisodes_per_epoch):
+    print("Test phase")
+    test_scores = []
+    for step in tqdm(range(n_test_episodes)):
 
         game.new_episode()
         while not game.is_episode_finished():
             best_action_index = agent.get_best_action(game.get_state().screen_buffer)
 
-            game.make_action(actions[best_action_index])
-            sleep(sleep_time)
+            game.make_action(actions[best_action_index], frame_repeat)
 
-            for _ in range(frame_repeat):
-                game.advance_action()
+        r = game.get_total_reward()
+        test_scores.append(r)
 
-        print("total:", game.get_total_reward())
+    test_scores = np.array(test_scores)
+    print("%d episodes are tested" %(test_scores.size))
+    print(test_scores)
+    print("Results: mean: %.1f(+-)%.1f," % (test_scores.mean(), test_scores.std()), \
+                  "min: %.1f," % test_scores.min(), "max: %.1f," % test_scores.max())
 
     game.close()
