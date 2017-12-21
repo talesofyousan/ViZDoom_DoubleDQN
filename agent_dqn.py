@@ -58,6 +58,15 @@ class agent_dqn(object):
         
         if global_step % self.freq_copy == 0:
             self.q_network.copy_params()
+        
+        if global_step % 10 == 0:
+            game.new_episode()
+            while not game.is_episode_finished():
+                screen_buff = self.preprocess(game.get_state().screen_buffer)
+                action = self.q_network.get_best_action(np.array([screen_buff]))
+                game.make_action(self.actions[action],self.frame_repeat)
+            
+            self.q_network.write_total_reward(game.get_total_reward(),global_step)
     
     def get_best_action(self, img):
         state = self.preprocess(img)

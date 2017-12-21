@@ -12,6 +12,7 @@ class network_simple(object):
         self.target_q_ = tf.placeholder(tf.float32, [None, n_action], name="TargetQ")
         self.reward_in = tf.placeholder(tf.float32, name="reward")
         self.reward_out = tf.identity(self.reward_in)
+        self.total_reward_ = tf.placeholder(tf.float32, name="total_reward")
 
         with tf.name_scope("conv1"):
             self.conv1_weight = tf.Variable(tf.truncated_normal(shape=[6,6,resolution[2],8],stddev=0.1),name="weight")
@@ -105,6 +106,7 @@ class network_simple(object):
             tf.summary.scalar('loss', self.loss)
             tf.summary.scalar('reward', self.reward_out)
             self.merged = tf.summary.merge_all()
+            self.total_reward_graph = tf.summary.scalar('total_reward', self.total_reward_)
             self.writer = tf.summary.FileWriter("./logs", self.session.graph)
 
     def learn(self, s1, target, reward, step):
@@ -136,6 +138,9 @@ class network_simple(object):
 
     def write(self, s1):
         self.writer.add_summary(self.session.run(self.merged,feed_dict={self.s1_:s1}))
+    
+    def write_total_reward(self, total_reward, step):
+        self.writer.add_summary(self.session.run(self.total_reward_graph,feed_dict={self.total_reward_:total_reward}),step)
 
     def save_model(self, model_path):
         self.saver.save(self.session, model_path)
