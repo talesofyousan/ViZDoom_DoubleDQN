@@ -13,10 +13,12 @@ dockerを使っているので，学習だけならどの環境でもいける�
 右が1学習ステップあたりに得られる報酬，左がネットワークの損失
 ![graph.png](https://github.com/YutaroKikuchi/ViZDoom_DoubleDQN/blob/master/images/graph.png)
 
-学習過程のGIFとかを作ります．(そのうち)
+学習終了時のエージェントの動作
+
+![demonstration_0009.gif](https://github.com/YutaroKikuchi/ViZDoom_DoubleDQN/blob/master/gifs/demonstration_0009.gif)
 
 
-#＃ 使い方
+## 使い方
 
 docker実行用のdocker イメージをビルドします．build.shがビルド用スクリプトです．
 ```
