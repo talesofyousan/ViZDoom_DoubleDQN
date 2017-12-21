@@ -3,6 +3,7 @@
 from __future__ import division
 from __future__ import print_function
 import sys
+import os
 from vizdoom import *
 import tensorflow as tf
 import itertools as it
@@ -26,13 +27,13 @@ testepisodes_per_epoch = 5
 config_file_path = "./config/simpler_basic.cfg"
 ckpt_path = "./model/"
 freq_copy = 30
-frame_repeat = 12
+frame_repeat = 4
 capacity = 10**4
 batch_size = 64
 
 sleep_time = 0.028
 
-save_gif = False
+save_gif = True
 
 # Creates and initializes ViZDoom environment.
 def initialize_vizdoom(config_file_path):
@@ -105,6 +106,7 @@ if __name__ == "__main__":
     if save_gif == True:
         images = np.array(frames)
         print("saving gif...")
-        make_gif(images,"./demonstration.gif",duration=len(images)*0.05)
+        filename, _ = os.path.splitext(os.path.basename(args[1]))
+        make_gif(images,"./demonstration_" + filename + ".gif",duration=len(images)*0.05)
 
     game.close()
