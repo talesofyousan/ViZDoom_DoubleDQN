@@ -14,6 +14,7 @@ import replay_memory
 import network_double
 import agent_dqn
 import math
+import moviepy.editor as mpy
 
 # Q-learning settings
 learning_rate = 0.0025
@@ -31,6 +32,8 @@ batch_size = 64
 
 sleep_time = 0.028
 
+save_gif = False
+
 # Creates and initializes ViZDoom environment.
 def initialize_vizdoom(config_file_path):
     print("Initializing doom...")
@@ -44,6 +47,20 @@ def initialize_vizdoom(config_file_path):
     game.init()
     print("Doom initialized.")
     return game
+
+def make_gif(images,fname,duration=2):
+
+    def make_frame(t):
+        try:
+            x = images[int(len(images)/duration*t)]
+        except:
+            x = images[-1]
+
+        return x.astype(np.uint8)
+
+    clip = mpy.VideoClip(make_frame,duration=duration)
+    clip.write_gif(fname, fps=len(images)/duration,verbose=False)
+
 
 if __name__ == "__main__":
     args = sys.argv
@@ -62,18 +79,32 @@ if __name__ == "__main__":
 
     agent.restore_model(args[1])
 
+    frames = []
+
     for step in range(testepisodes_per_epoch):
 
         game.new_episode()
         while not game.is_episode_finished():
-            best_action_index = agent.get_best_action(game.get_state().screen_buffer)
+            s1 = game.get_state().screen_buffer
+            frames.append(s1)
+            best_action_index = agent.get_best_action(s1)
 
             game.make_action(actions[best_action_index])
 
             for _ in range(frame_repeat):
+                if not game.is_episode_finished():
+                    s1 = game.get_state().screen_buffer
+                    frames.append(s1)
                 game.advance_action()
             
             sleep(sleep_time)
 
         print("total:", game.get_total_reward())
 
+
+    if save_gif == True:
+        images = np.array(frames)
+        print("saving gif...")
+        make_gif(images,"./demonstration.gif",duration=len(images)*0.05)
+
+    game.close()

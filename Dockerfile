@@ -69,6 +69,8 @@ RUN export uid=${HOST_UID} gid=${HOST_GID} && \
 USER ${USER_NAME}
 WORKDIR ${HOME_DIR}
 
+RUN python3 -c "import imageio;imageio.plugins.ffmpeg.download()"
+
 RUN mkdir config
 RUN mkdir model
 COPY model ./model
